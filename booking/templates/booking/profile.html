@@ -1,0 +1,80 @@
+{% extends 'booking/base.html' %}
+
+{% block title %}Профиль{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">
+        <i class="fas fa-user-circle text-primary"></i>
+        Мой профиль
+    </h1>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-user"></i> Личная информация</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Логин:</strong> {{ user.username }}</p>
+                        <p><strong>Email:</strong> {{ user.email|default:"Не указан" }}</p>
+                        <p><strong>Имя:</strong> {{ user.first_name|default:"Не указано" }}</p>
+                        <p><strong>Фамилия:</strong> {{ user.last_name|default:"Не указана" }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Роль:</strong> {{ user.get_role_display }}</p>
+                        <p><strong>Подразделение:</strong> {{ user.department.name|default:"Не указано" }}</p>
+                        <p><strong>Телефон:</strong> {{ user.phone|default:"Не указан" }}</p>
+                        <p><strong>Дата регистрации:</strong> {{ user.date_joined|date:"d.m.Y" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fab fa-telegram"></i> Telegram</h5>
+            </div>
+            <div class="card-body">
+                {% if user.telegram_chat_id %}
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle"></i>
+                        Telegram подключен
+                    </div>
+                    <button class="btn btn-outline-danger btn-sm">
+                        <i class="fas fa-unlink"></i> Отключить
+                    </button>
+                {% else %}
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Telegram не подключен
+                    </div>
+                    <p><strong>Ваш ключ:</strong></p>
+                    <code class="d-block mb-2">{{ user.telegram_key }}</code>
+                    <small class="text-muted">
+                        Отправьте этот ключ боту @equipment_booking_bot для подключения уведомлений
+                    </small>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5><i class="fas fa-building"></i> Доступные подразделения</h5>
+            </div>
+            <div class="card-body">
+                {% for dept in user.get_accessible_departments %}
+                    <span class="badge bg-primary me-1 mb-1">{{ dept.name }}</span>
+                {% empty %}
+                    <p class="text-muted">Нет доступных подразделений</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
